@@ -69,3 +69,6 @@ def run_wf(file_name: str, test_size: float, random_state: int) -> np.ndarray:
     )
     print("Model training complete. Prediction is returned")
     return y_pred
+
+if __name__=="__main__":
+    run_wf(file_name = hp.file_name, test_size = hp.test_size, random_state= hp.random_state)
