@@ -49,33 +49,12 @@ def train_model(
     return model.fit(X_train, y_train)
 
 
-# model_new = train_model(X_train=X_train, y_train= y_train, model=model)
-
-
-# def predict(model: PythonPickledFile, X_test, y_test) -> np.ndarray:
-#     # Make predictions for Random Forest on the test set
-#     y_pred = model.predict(X_test)
-#     print("Accuracy:", accuracy_score(y_test, y_pred))
-#     return y_pred
-
-def run_wf(file_name: str, test_size: float, random_state: int) -> RandomForestClassifier:
+def run_wf(file_name: str, test_size: float, random_state: int) -> np.ndarray:
     X, y = collect_data(file_name)
     X_train, X_test, y_train, y_test = split_data(
         feature=X, target=y, test_size=test_size, random_state=random_state
     )
     return train_model(X_train=X_train, y_train=y_train)
-
-
-# def run_wf(file_name: str, test_size: float, random_state: int) -> np.ndarray:
-#     X, y = collect_data(file_name)
-#     X_train, X_test, y_train, y_test = split_data(
-#         feature=X, target=y, test_size=test_size, random_state=random_state
-#     )
-#     y_pred = predict(
-#         train_model(X_train=X_train, y_train=y_train), X_test=X_test, y_test=y_test
-#     )
-#     print("Model training complete. Prediction is returned")
-#     return y_pred
 
 if __name__=="__main__":
     run_wf(file_name = hp.file_name, test_size = hp.test_size, random_state= hp.random_state)
