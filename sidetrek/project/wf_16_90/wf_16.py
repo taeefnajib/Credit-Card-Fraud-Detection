@@ -2,8 +2,8 @@ import sklearn
 import os
 import typing
 from flytekit import workflow
-from project.wf_16_89.main import Hyperparameters
-from project.wf_16_89.main import run_wf
+from project.wf_16_90.main import Hyperparameters
+from project.wf_16_90.main import run_wf
 
 _wf_outputs=typing.NamedTuple("WfOutputs",run_wf_0=sklearn.ensemble._forest.RandomForestClassifier)
 @workflow

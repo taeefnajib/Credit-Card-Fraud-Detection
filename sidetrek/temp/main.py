@@ -24,7 +24,7 @@ hp = Hyperparameters()
 
 def collect_data(filename: str) -> typing.Tuple[np.ndarray, np.ndarray]:
     # Load the data
-    df = pd.read_csv(filename)
+    df = pd.read_csv((pathlib.Path(__file__).parent / filename).resolve())
     # Define X and Y
     X = df.drop(["fraud"], axis=1)
     y = df["fraud"]

@@ -9,6 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from flytekit.types.file import PythonPickledFile
+import pathlib
 
 
 @dataclass_json
