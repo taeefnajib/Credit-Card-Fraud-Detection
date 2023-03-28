@@ -24,7 +24,7 @@ hp = Hyperparameters()
 
 def collect_data(filename: str) -> typing.Tuple[np.ndarray, np.ndarray]:
     # Load the data
-    df = pd.read_csv(filename)
+    df = pd.read_csv((pathlib.Path(__file__).parent / filename).resolve())
     # Define X and Y
     X = df.drop(["fraud"], axis=1)
     y = df["fraud"]
@@ -49,12 +49,23 @@ def train_model(
     return model.fit(X_train, y_train)
 
 
-def run_wf(file_name: str, test_size: float, random_state: int) -> np.ndarray:
-    X, y = collect_data(file_name)
+# model_new = train_model(X_train=X_train, y_train= y_train, model=model)
+
+
+# def predict(model: PythonPickledFile, X_test, y_test) -> np.ndarray:
+#     # Make predictions for Random Forest on the test set
+#     y_pred = model.predict(X_test)
+#     print("Accuracy:", accuracy_score(y_test, y_pred))
+#     return y_pred
+
+
+def run_wf(hp: Hyperparameters) -> RandomForestClassifier:
+    X, y = collect_data(hp.file_name)
     X_train, X_test, y_train, y_test = split_data(
-        feature=X, target=y, test_size=test_size, random_state=random_state
+        feature=X, target=y, test_size=hp.test_size, random_state=hp.random_state
     )
-    return train_model(X_train=X_train, y_train=y_train)
+    model = train_model(X_train=X_train, y_train=y_train)
+    return model
 
 if __name__=="__main__":
     run_wf(file_name = hp.file_name, test_size = hp.test_size, random_state= hp.random_state)
