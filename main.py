@@ -10,12 +10,13 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from flytekit.types.file import PythonPickledFile
 import pathlib
+from sidetrek.dataset import load_dataset
+from sidetrek.types.dataset import SidetrekDataset
 
 
 @dataclass_json
 @dataclass
 class Hyperparameters(object):
-    file_name: str = "card_transdata.csv"
     test_size: float = 0.25
     random_state: int = 42
 
@@ -23,9 +24,12 @@ class Hyperparameters(object):
 hp = Hyperparameters()
 
 
-def collect_data(filename: str) -> typing.Tuple[np.ndarray, np.ndarray]:
-    # Load the data
-    df = pd.read_csv((pathlib.Path(__file__).parent / filename).resolve())
+def load_data(ds: SidetrekDataset) -> typing.Tuple[np.ndarray, np.ndarray]:
+    # Load the dataset
+    csv_data = load_dataset(ds, data_type="csv", compression="zip", streaming=False)
+
+    df = pd.read_csv(csv_data)
+    # df = pd.read_csv((pathlib.Path(__file__).parent / filename).resolve())
     # Define X and Y
     X = df.drop(["fraud"], axis=1)
     y = df["fraud"]
@@ -50,23 +54,13 @@ def train_model(
     return model.fit(X_train, y_train)
 
 
-# model_new = train_model(X_train=X_train, y_train= y_train, model=model)
-
-
-# def predict(model: PythonPickledFile, X_test, y_test) -> np.ndarray:
-#     # Make predictions for Random Forest on the test set
-#     y_pred = model.predict(X_test)
-#     print("Accuracy:", accuracy_score(y_test, y_pred))
-#     return y_pred
-
-
-def run_wf(hp: Hyperparameters) -> RandomForestClassifier:
-    X, y = collect_data(hp.file_name)
+def run_wf(hp: Hyperparameters, X: np.ndarray, y: np.ndarray) -> RandomForestClassifier:
     X_train, X_test, y_train, y_test = split_data(
         feature=X, target=y, test_size=hp.test_size, random_state=hp.random_state
     )
     model = train_model(X_train=X_train, y_train=y_train)
     return model
+
 
 if __name__=="__main__":
     run_wf(file_name = hp.file_name, test_size = hp.test_size, random_state= hp.random_state)
