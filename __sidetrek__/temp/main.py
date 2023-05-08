@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from flytekit.types.file import PythonPickledFile
 import pathlib
+from sidetrek import get_project_dir
 from sidetrek.dataset import load_dataset
 from sidetrek.types.dataset import SidetrekDataset
 
@@ -60,6 +61,7 @@ def run_wf(hp: Hyperparameters, X: np.ndarray, y: np.ndarray) -> RandomForestCla
     )
     model = train_model(X_train=X_train, y_train=y_train)
     return model
+
 
 if __name__=="__main__":
     run_wf(file_name = hp.file_name, test_size = hp.test_size, random_state= hp.random_state)

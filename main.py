@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from flytekit.types.file import PythonPickledFile
 import pathlib
+from sidetrek import get_project_dir
 from sidetrek.dataset import load_dataset
 from sidetrek.types.dataset import SidetrekDataset
 
