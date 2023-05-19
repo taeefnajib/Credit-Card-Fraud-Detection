@@ -1,3 +1,5 @@
+from flytekit import Resources, task
+
 # Import necessary libraries
 import pandas as pd
 import numpy as np
@@ -25,34 +27,27 @@ class Hyperparameters(object):
 hp = Hyperparameters()
 
 
-def collect_data(source: str) -> typing.Tuple[pd.DataFrame, pd.Series]:
-    # Build the data
-    ds = build_dataset(io="upload", source=source)
+@task(requests=Resources(cpu="2",mem="1Gi"),limits=Resources(cpu="2",mem="1Gi"),retries=3)
+def collect_data(ds: SidetrekDataset) -> typing.Tuple[np.ndarray, np.ndarray]:
     # Load the data
-    data = load_dataset(ds=ds, data_type="csv")
-    # Create dataframe
-    columns = list(data)[0]
-    data_list = []
-    for item in data:
-        data_list.append(item)
-    df = pd.DataFrame(data_list, columns=columns)
-    df.drop(index=df.index[0], axis=0, inplace=True)
+    df = pd.read_csv(ds.source)
     # Define X and Y
-    X = df.drop(columns=["fraud"])
+    X = df.drop(["fraud"], axis=1)
     y = df["fraud"]
     # Standardize the data
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
-    X = pd.DataFrame(data=X, columns=columns[:-1])
     return (X, y)
 
 
+@task(requests=Resources(cpu="2",mem="1Gi"),limits=Resources(cpu="2",mem="1Gi"),retries=3)
 def split_data(
-    hp: Hyperparameters, X: pd.DataFrame, y: pd.Series) -> typing.Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    hp: Hyperparameters, X: pd.DataFrame, y: pd.DataFrame) -> typing.Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     # Split the data into training and test sets
-    return train_test_split(X, y, test_size = hp.test_size, random_state = hp.random_state)
+    return train_test_split(X=X, y=y, test_size = hp.test_size, random_state = hp.random_state)
 
 
+@task(requests=Resources(cpu="2",mem="1Gi"),limits=Resources(cpu="2",mem="1Gi"),retries=3)
 def train_model(
     X_train: pd.DataFrame, y_train: pd.Series
 ) -> RandomForestClassifier:

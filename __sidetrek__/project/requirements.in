@@ -1,0 +1,8 @@
+dataclasses_json
+scikit-learn
+pandas
+numpy<1.23.5
+joblib
+sidetrek>=0.0.41
+
+sidetrek>=0.0.16
