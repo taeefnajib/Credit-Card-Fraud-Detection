@@ -25,9 +25,7 @@ class Hyperparameters(object):
 hp = Hyperparameters()
 
 
-def collect_data(source: str) -> typing.Tuple[pd.DataFrame, pd.Series]:
-    # Build the data
-    ds = build_dataset(io="upload", source=source)
+def collect_data(ds: SidetrekDataset) -> typing.Tuple[pd.DataFrame, pd.Series]:
     # Load the data
     data = load_dataset(ds=ds, data_type="csv")
     # Create dataframe
