@@ -3,10 +3,10 @@ import os
 import typing
 from flytekit import task, workflow, Resources
 import sidetrek
-from project.wf_67_410.main import Hyperparameters
-from project.wf_67_410.main import collect_data
-from project.wf_67_410.main import split_data
-from project.wf_67_410.main import train_model
+from project.wf_67_411.main import Hyperparameters
+from project.wf_67_411.main import collect_data
+from project.wf_67_411.main import split_data
+from project.wf_67_411.main import train_model
 
 @task(requests=Resources(cpu="2",mem="1Gi"),limits=Resources(cpu="2",mem="1Gi"),retries=3)
 def dataset_test_org_cc_data()->sidetrek.types.dataset.SidetrekDataset:
