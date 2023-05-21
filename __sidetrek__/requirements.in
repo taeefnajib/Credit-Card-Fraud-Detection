@@ -3,4 +3,4 @@ scikit-learn
 pandas
 numpy<1.23.5
 joblib
-sidetrek>=0.0.43
+sidetrek>=0.0.44

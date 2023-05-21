@@ -489,7 +489,7 @@ secretstorage==3.3.3
     # via keyring
 shellingham==1.5.0.post1
     # via typer
-sidetrek==0.0.43
+sidetrek==0.0.44
     # via -r /userRepoData/taeefnajib/Credit-Card-Fraud-Detection/__sidetrek__/requirements.in
 simple-di==0.1.5
     # via bentoml

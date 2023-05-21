@@ -29,7 +29,7 @@ def collect_data(ds: SidetrekDataset) -> typing.Tuple[pd.DataFrame, pd.Series]:
     # Load the data
     data = load_dataset(ds=ds, data_type="csv")
     # Create dataframe
-    columns = list(data)[0]
+    columns = ['distance_from_home', 'distance_from_last_transaction', 'ratio_to_median_purchase_price', 'repeat_retailer', 'used_chip', 'used_pin_number', 'online_order', 'fraud']
     data_list = []
     for item in data:
         data_list.append(item)
