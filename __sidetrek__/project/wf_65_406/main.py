@@ -28,23 +28,31 @@ hp = Hyperparameters()
 
 
 @task(requests=Resources(cpu="2",mem="1Gi"),limits=Resources(cpu="2",mem="1Gi"),retries=3)
-def collect_data(ds: SidetrekDataset) -> typing.Tuple[np.ndarray, np.ndarray]:
+def collect_data(ds: SidetrekDataset) -> typing.Tuple[pd.DataFrame, pd.Series]:
     # Load the data
-    df = pd.read_csv(ds.source)
+    data = load_dataset(ds=ds, data_type="csv")
+    # Create dataframe
+    columns = list(data)[0]
+    data_list = []
+    for item in data:
+        data_list.append(item)
+    df = pd.DataFrame(data_list, columns=columns)
+    df.drop(index=df.index[0], axis=0, inplace=True)
     # Define X and Y
-    X = df.drop(["fraud"], axis=1)
+    X = df.drop(columns=["fraud"])
     y = df["fraud"]
     # Standardize the data
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
+    X = pd.DataFrame(data=X, columns=columns[:-1])
     return (X, y)
 
 
 @task(requests=Resources(cpu="2",mem="1Gi"),limits=Resources(cpu="2",mem="1Gi"),retries=3)
 def split_data(
-    hp: Hyperparameters, X: pd.DataFrame, y: pd.DataFrame) -> typing.Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    hp: Hyperparameters, X: pd.DataFrame, y: pd.Series) -> typing.Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     # Split the data into training and test sets
-    return train_test_split(X=X, y=y, test_size = hp.test_size, random_state = hp.random_state)
+    return train_test_split(X, y, test_size = hp.test_size, random_state = hp.random_state)
 
 
 @task(requests=Resources(cpu="2",mem="1Gi"),limits=Resources(cpu="2",mem="1Gi"),retries=3)
