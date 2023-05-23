@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from flytekit.types.file import PythonPickledFile
 import pathlib
-from sidetrek import get_project_dir
 from sidetrek.dataset import load_dataset
 from sidetrek.types.dataset import SidetrekDataset
 
@@ -27,11 +26,12 @@ hp = Hyperparameters()
 
 def load_data(ds: SidetrekDataset) -> typing.Tuple[np.ndarray, np.ndarray]:
     # Load the dataset
-    csv_data = load_dataset(ds, data_type="csv", compression="zip", streaming=False)
+    csv_data = load_dataset(ds, data_type="csv", streaming=False)
 
-    df = pd.read_csv(csv_data)
-    # df = pd.read_csv((pathlib.Path(__file__).parent / filename).resolve())
-    # Define X and Y
+    df = pd.DataFrame()
+    for row in list(csv_data):
+        df.append(row)
+
     X = df.drop(["fraud"], axis=1)
     y = df["fraud"]
     # Standardize the data

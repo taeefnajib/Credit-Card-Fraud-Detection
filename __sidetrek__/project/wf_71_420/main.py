@@ -12,7 +12,6 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from flytekit.types.file import PythonPickledFile
 import pathlib
-from sidetrek import get_project_dir
 from sidetrek.dataset import load_dataset
 from sidetrek.types.dataset import SidetrekDataset
 
@@ -30,13 +29,24 @@ hp = Hyperparameters()
 @task(requests=Resources(cpu="2",mem="1Gi"),limits=Resources(cpu="2",mem="1Gi"),retries=3)
 def load_data(ds: SidetrekDataset) -> typing.Tuple[np.ndarray, np.ndarray]:
     # Load the dataset
-    csv_data = load_dataset(ds, data_type="csv", compression="zip", streaming=False)
+    csv_data = load_dataset(ds, data_type="csv")
 
-    df = pd.read_csv(csv_data)
-    # df = pd.read_csv((pathlib.Path(__file__).parent / filename).resolve())
-    # Define X and Y
+    # Create df
+    csv_data_dict = {}
+    for i, row in enumerate(csv_data):
+        csv_data_dict[i] = row
+
+    df = pd.DataFrame.from_dict(csv_data_dict, orient="index")
+
+    # Add columns
+    df.columns = df.iloc[0]
+    df.drop(index=df.index[0], axis=0, inplace=True)
+    print(df.head(5))
+
+    # Separate the data into 
+    y = df.loc[:,"fraud"].to_numpy(dtype=float)
     X = df.drop(["fraud"], axis=1)
-    y = df["fraud"]
+
     # Standardize the data
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
@@ -45,13 +55,13 @@ def load_data(ds: SidetrekDataset) -> typing.Tuple[np.ndarray, np.ndarray]:
 
 def split_data(
     feature: np.ndarray, target: np.ndarray, test_size: float, random_state: int
-) -> typing.Tuple[np.ndarray, np.ndarray, pd.Series, pd.Series]:
+) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     # Split the data into training and test sets
     return train_test_split(feature, target, test_size = test_size, random_state = random_state)
 
 
 def train_model(
-    X_train: np.ndarray, y_train: pd.Series
+    X_train: np.ndarray, y_train: np.ndarray
 ) -> RandomForestClassifier:
     model = RandomForestClassifier()
     # Fit the model
