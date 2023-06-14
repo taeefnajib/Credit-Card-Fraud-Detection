@@ -21,7 +21,7 @@ from sidetrek.types.dataset import SidetrekDataset, SidetrekIterDataPipe, Sidetr
 class Hyperparameters(object):
     test_size: float = 0.25
     random_state: int = 42
-
+ 
 
 hp = Hyperparameters()
 
